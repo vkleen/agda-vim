@@ -24,6 +24,12 @@ else
     let g:agdavim_agda_includepathlist_unquoted = ['.']
 endif
 
+if exists("g:agda_commandline")
+  let g:agdavim_agda_extra_commandline = g:agda_commandline
+else
+  let g:agdavim_agda_extra_commandline = []
+endif
+
 let g:agdavim_agda_includepathlist = deepcopy(g:agdavim_agda_includepathlist_unquoted)
 call map(g:agdavim_agda_includepathlist, ' ''"'' . v:val . ''"'' ')
 let &makeprg = 'agda --vim ' . '-i ' . join(g:agdavim_agda_includepathlist, ' -i ') . ' %'
@@ -289,7 +295,8 @@ def sendCommandLoad(file, quiet):
         incpaths_str = ",".join(vim.eval("g:agdavim_agda_includepathlist"))
     else:
         incpaths_str = "\"-i\"," + ",\"-i\",".join(vim.eval("g:agdavim_agda_includepathlist"))
-    sendCommand('Cmd_load "%s" [%s]' % (escape(file), incpaths_str), quiet = quiet)
+    args = incpaths_str + join(vim.eval("g:agdavim_agda_extra_commandline"))
+    sendCommand('Cmd_load "%s" [%s]' % (escape(file), args), quiet = quiet)
 
 #def getIdentifierAtCursor():
 #    (r, c) = vim.current.window.cursor
